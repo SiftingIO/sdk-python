@@ -42,7 +42,7 @@ async def test_async_ws_subscribe_and_receive():
 
         await socket.connect()
         assert socket.connected
-        await socket.subscribe("cex", ["BTCUSDT", "ETHUSDT"])
+        await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])
 
         # Wait until both ticks land (handlers run on this loop).
         for _ in range(50):
@@ -52,7 +52,7 @@ async def test_async_ws_subscribe_and_receive():
 
         assert acks, "expected an ack frame"
         symbols = sorted(t["s"] for t in ticks)
-        assert symbols == ["BTCUSDT", "ETHUSDT"]
+        assert symbols == ["BTCUSD", "ETHUSD"]
 
         await socket.close()
         await client.aclose()
@@ -66,7 +66,7 @@ async def test_async_ws_async_iteration():
         socket = client.ws(auto_reconnect=False)
 
         await socket.connect()
-        await socket.subscribe("cex", ["BTCUSDT"])
+        await socket.subscribe("cex", ["BTCUSD"])
 
         got_tick = None
         async def consume():
@@ -78,7 +78,7 @@ async def test_async_ws_async_iteration():
 
         await asyncio.wait_for(consume(), timeout=2.0)
         assert got_tick is not None
-        assert got_tick["s"] == "BTCUSDT"
+        assert got_tick["s"] == "BTCUSD"
 
         await socket.close()
         await client.aclose()

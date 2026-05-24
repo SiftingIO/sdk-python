@@ -32,13 +32,13 @@ def test_request_url_params_and_key():
         seen["url"] = str(request.url)
         seen["key"] = request.headers.get("x-api-key")
         seen["accept_encoding"] = request.headers.get("accept-encoding")
-        return httpx.Response(200, json={"s": "BTCUSDT", "p": "1", "P": "1", "t": 1})
+        return httpx.Response(200, json={"s": "BTCUSD", "p": "1", "P": "1", "t": 1})
 
     client = mock_client(handler)
-    trade = client.last.trade("crypto", "BTCUSDT")
+    trade = client.last.trade("crypto", "BTCUSD")
 
-    assert trade["s"] == "BTCUSDT"
-    assert seen["url"] == "https://api.sifting.io/v1/last/trade/crypto/BTCUSDT"
+    assert trade["s"] == "BTCUSD"
+    assert seen["url"] == "https://api.sifting.io/v1/last/trade/crypto/BTCUSD"
     assert seen["key"] == "sft_test"
     assert "gzip" in seen["accept_encoding"]
 
@@ -109,7 +109,7 @@ def test_rate_limit_retry_after():
         http_client=httpx.Client(transport=httpx.MockTransport(handler)),
     )
     with pytest.raises(SiftingAPIError) as exc:
-        client.last.trade("crypto", "BTCUSDT")
+        client.last.trade("crypto", "BTCUSD")
     assert exc.value.code == "rate_limit_exceeded"
     assert exc.value.retry_after == 7
 
@@ -128,7 +128,7 @@ def test_retry_then_success():
         max_retries=2,
         http_client=httpx.Client(transport=httpx.MockTransport(handler)),
     )
-    trade = client.last.trade("crypto", "BTCUSDT")
+    trade = client.last.trade("crypto", "BTCUSD")
     assert trade["s"] == "X"
     assert calls["n"] == 2
 

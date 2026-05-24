@@ -19,7 +19,7 @@ def _tvl(chain: str, pair: str) -> Req:
 
 
 class LastResource(_SyncResource):
-    """Live data, e.g. ``client.last.trade("crypto", "BTCUSDT")``."""
+    """Live data, e.g. ``client.last.trade("crypto", "BTCUSD")``."""
 
     def trade(self, venue: str, symbol: str) -> LastTrade:
         return self._get(_trade(venue, symbol))

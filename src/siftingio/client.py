@@ -35,7 +35,7 @@ class SiftingClient:
         from siftingio import SiftingClient
 
         client = SiftingClient(api_key="sft_...")
-        trade = client.last.trade("crypto", "BTCUSDT")
+        trade = client.last.trade("crypto", "BTCUSD")
         profile = client.stocks.profile("AAPL")
 
     Resources mirror the API URL structure, so the docs map 1:1 onto methods.
@@ -95,7 +95,7 @@ class AsyncSiftingClient:
         from siftingio import AsyncSiftingClient
 
         async with AsyncSiftingClient(api_key="sft_...") as client:
-            trade = await client.last.trade("crypto", "BTCUSDT")
+            trade = await client.last.trade("crypto", "BTCUSD")
     """
 
     def __init__(

@@ -23,7 +23,7 @@ from siftingio import SiftingClient
 client = SiftingClient(api_key="sft_...")  # or env-driven; see below
 
 # Live price
-trade = client.last.trade("crypto", "BTCUSDT")
+trade = client.last.trade("crypto", "BTCUSD")
 print(trade["p"], trade["t"])
 
 # Company fundamentals
@@ -45,7 +45,7 @@ from siftingio import AsyncSiftingClient
 
 async def main():
     async with AsyncSiftingClient(api_key="sft_...") as client:
-        quote = await client.last.quote("crypto", "ETHUSDT")
+        quote = await client.last.quote("crypto", "ETHUSD")
         print(quote["b"], quote["a"])
 
 asyncio.run(main())
@@ -122,7 +122,7 @@ async for filing in aauto_paginate(lambda cursor: client.stocks.filings("AAPL", 
 async with client.ws() as socket:   # client = AsyncSiftingClient(...)
     socket.on("tick", lambda t: print(t["s"], t.get("p")))
     socket.on("error", lambda e: print("server error:", e["code"], e["message"]))
-    await socket.subscribe("cex", ["BTCUSDT", "ETHUSDT"])  # products: cex|dex|fx|us|tvl
+    await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])  # products: cex|dex|fx|us|tvl
     async for frame in socket:       # or rely purely on handlers
         ...
 ```
@@ -133,7 +133,7 @@ async with client.ws() as socket:   # client = AsyncSiftingClient(...)
 socket = client.ws()                 # client = SiftingClient(...)
 socket.on("tick", lambda t: print(t["s"], t.get("p")))
 socket.connect()
-socket.subscribe("cex", ["BTCUSDT"])
+socket.subscribe("cex", ["BTCUSD"])
 for frame in socket.stream():
     ...
 socket.close()

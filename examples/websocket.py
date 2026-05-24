@@ -20,7 +20,7 @@ async def main() -> None:
     socket.on("tvl", lambda v: print(f"[tvl] {v['s']} ${v['usd']}"))
 
     await socket.connect()
-    await socket.subscribe("cex", ["BTCUSDT", "ETHUSDT"])
+    await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])
     await socket.subscribe("tvl", ["eth:WETH-USDC"])
 
     # Stream for 30 seconds, then close.
@@ -37,7 +37,7 @@ async def main() -> None:
 #     socket = client.ws()
 #     socket.on("tick", lambda t: print(t["s"], t.get("p")))
 #     socket.connect()
-#     socket.subscribe("cex", ["BTCUSDT"])
+#     socket.subscribe("cex", ["BTCUSD"])
 #     for frame in socket.stream():
 #         ...
 #     socket.close()

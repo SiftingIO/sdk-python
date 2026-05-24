@@ -8,7 +8,7 @@ from siftingio import SiftingAPIError, SiftingClient, auto_paginate
 def main() -> None:
     with SiftingClient(api_key=os.environ.get("SIFTING_API_KEY")) as client:
         # 1. Live snapshot
-        trade = client.last.trade("crypto", "BTCUSDT")
+        trade = client.last.trade("crypto", "BTCUSD")
         print("BTC last trade:", trade["p"], "@", trade["t"])
 
         # 2. Fundamentals

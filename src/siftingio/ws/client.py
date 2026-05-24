@@ -38,7 +38,7 @@ class AsyncSiftingSocket:
         socket = async_client.ws()
         socket.on("tick", lambda t: print(t["s"], t.get("p")))
         await socket.connect()
-        await socket.subscribe("cex", ["BTCUSDT", "ETHUSDT"])
+        await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])
         async for frame in socket:   # or rely purely on handlers
             ...
     """
@@ -233,7 +233,7 @@ class SiftingSocket:
         socket = client.ws()
         socket.on("tick", lambda t: print(t["s"], t.get("p")))
         socket.connect()
-        socket.subscribe("cex", ["BTCUSDT"])
+        socket.subscribe("cex", ["BTCUSD"])
         for frame in socket.stream():
             ...
         socket.close()

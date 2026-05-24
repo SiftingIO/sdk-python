@@ -2,12 +2,12 @@
 
 >>> from siftingio import SiftingClient
 >>> client = SiftingClient(api_key="sft_...")
->>> client.last.trade("crypto", "BTCUSDT")   # doctest: +SKIP
+>>> client.last.trade("crypto", "BTCUSD")   # doctest: +SKIP
 """
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .client import AsyncSiftingClient, SiftingClient
 from .errors import SiftingAPIError, SiftingConnectionError, SiftingError
