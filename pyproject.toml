@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "siftingio"
+dynamic = ["version"]
+description = "Official Python SDK for the SiftingIO market data API (sync + async REST, plus WebSocket)."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "SiftingIO" }]
+keywords = [
+    "siftingio", "sifting", "market-data", "stocks", "crypto", "forex",
+    "sec", "edgar", "fundamentals", "xbrl", "websocket", "api", "sdk",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = [
+    "httpx>=0.27",
+    "websockets>=12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "build>=1.2",
+    "twine>=5.0",
+]
+
+[project.urls]
+Homepage = "https://sifting.io"
+Documentation = "https://sifting.io/docs"
+Source = "https://github.com/siftingio/sdk-python"
+
+[tool.hatch.version]
+path = "src/siftingio/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/siftingio"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+# Runtime support is 3.9+ (every module uses `from __future__ import
+# annotations`); the checker itself runs on 3.10+.
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true
+# Responses are parsed JSON (dict). The transport is typed `Any` and resource
+# methods advertise precise TypedDict returns to callers; we intentionally trust
+# the JSON shape rather than runtime-validate, so internal Any-returns are fine.
+warn_return_any = false
