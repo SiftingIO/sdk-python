@@ -1,11 +1,27 @@
-# siftingio
+# SiftingIO Python SDK
 
-Official Python SDK for the [SiftingIO](https://sifting.io) market data API — **sync and async** REST clients plus a live WebSocket, fully type-hinted.
+Official Python SDK for the [SiftingIO Market Data API](https://sifting.io).
 
-- **Sync *and* async.** `SiftingClient` for scripts, notebooks, and pandas; `AsyncSiftingClient` for asyncio services. Same method names, same shapes.
-- **Typed.** Every endpoint, parameter, and response is annotated (`py.typed`); responses are plain dicts with `TypedDict` shapes for editor autocomplete.
-- **Resource-mapped.** Methods mirror the [API docs](https://sifting.io/docs) 1:1.
-- **Batteries included.** Auto-retry on 429/5xx, gzip negotiation, cursor auto-pagination, and an auto-reconnecting WebSocket client.
+SiftingIO provides real-time and historical market data APIs for stocks, FX, crypto, commodities, DEX, and on-chain markets through REST and WebSocket.
+
+This SDK is built for Python developers integrating market data into financial applications, trading tools, dashboards, research workflows, backtesting systems, data pipelines, notebooks, and enterprise data workflows.
+
+## Highlights
+
+* **Sync and async clients** with `SiftingClient` for scripts, notebooks, and data workflows, and `AsyncSiftingClient` for asyncio services.
+* **REST and WebSocket support** in one package.
+* **Fully type-hinted** endpoint parameters and response shapes with `py.typed`.
+* **Resource-mapped API design** with method names that mirror the [SiftingIO API documentation](https://sifting.io/docs).
+* **Production-oriented defaults** including retry handling for `429` and `5xx`, gzip negotiation, cursor auto-pagination, and an auto-reconnecting WebSocket client.
+* **Lightweight dependencies** using only `httpx` and `websockets`.
+
+## Resources
+
+* [Website](https://sifting.io)
+* [API Documentation](https://sifting.io/docs)
+* [Postman Collection](https://www.postman.com/siftingio/siftingio-market-data-api)
+* [Pricing](https://sifting.io/pricing)
+* [System Status](https://siftingio.instatus.com/)
 
 ## Install
 
@@ -13,16 +29,16 @@ Official Python SDK for the [SiftingIO](https://sifting.io) market data API — 
 pip install siftingio
 ```
 
-Requires Python 3.9+. Depends only on `httpx` and `websockets`.
+Requires Python 3.9+.
 
-## Quick start (sync)
+## Quick start: sync client
 
 ```python
 from siftingio import SiftingClient
 
-client = SiftingClient(api_key="sft_...")  # or env-driven; see below
+client = SiftingClient(api_key="sft_...")
 
-# Live price
+# Live price snapshot
 trade = client.last.trade("crypto", "BTCUSD")
 print(trade["p"], trade["t"])
 
@@ -30,14 +46,24 @@ print(trade["p"], trade["t"])
 profile = client.stocks.profile("AAPL")
 ratios = client.stocks.ratios("AAPL")
 
-# Historical bars (gzip handled for you)
+# Historical bars
 bars = client.crypto.bars("BTCUSD", start="2024-01-01", interval="1h")
 print(len(bars["data"]), "bars")
 
-client.close()  # or use `with SiftingClient(...) as client:`
+client.close()
 ```
 
-## Quick start (async)
+You can also use the sync client as a context manager:
+
+```python
+from siftingio import SiftingClient
+
+with SiftingClient(api_key="sft_...") as client:
+    quote = client.last.quote("crypto", "ETHUSD")
+    print(quote["b"], quote["a"])
+```
+
+## Quick start: async client
 
 ```python
 import asyncio
@@ -53,93 +79,132 @@ asyncio.run(main())
 
 ## Authentication
 
-Get an API key from your [SiftingIO dashboard](https://sifting.io). It's sent as the `X-API-Key` header. You can also supply it dynamically (e.g. from a secrets manager or a rotating token):
+Create an API key from the [SiftingIO dashboard](https://sifting.io). The SDK sends it as the `X-API-Key` header.
+
+```python
+from siftingio import SiftingClient
+
+client = SiftingClient(api_key="sft_...")
+```
+
+You can also provide the API key dynamically, for example from a secrets manager or token rotation workflow:
 
 ```python
 client = SiftingClient(get_api_key=lambda: read_secret("SIFTING_API_KEY"))
+```
 
-# Async: the hook may be sync or async
+For async clients, the hook may be sync or async:
+
+```python
 async_client = AsyncSiftingClient(get_api_key=fetch_token_async)
 ```
 
 ## Configuration
 
 ```python
-SiftingClient(
-    api_key="sft_...",       # X-API-Key header
-    get_api_key=callable,    # dynamic alternative to api_key
-    base_url="https://api.sifting.io",      # override for proxies/staging
-    ws_url="wss://stream.sifting.io/ws/v1", # WebSocket endpoint
-    timeout=30.0,            # per-request timeout (seconds)
-    max_retries=2,           # automatic retries for 429 / 5xx
-    headers={"X-Trace": "…"},# extra headers on every request
-    http_client=httpx.Client(...),  # bring your own httpx client
+from siftingio import SiftingClient
+
+client = SiftingClient(
+    api_key="sft_...",                         # X-API-Key header
+    get_api_key=None,                          # dynamic alternative to api_key
+    base_url="https://api.sifting.io",         # override for proxies or staging
+    ws_url="wss://stream.sifting.io/ws/v1",    # WebSocket endpoint
+    timeout=30.0,                              # per-request timeout in seconds
+    max_retries=2,                             # automatic retries for 429 and 5xx
+    headers={"X-Trace": "..."},                # extra headers on every request
 )
 ```
 
-`AsyncSiftingClient` takes the same arguments (with `httpx.AsyncClient`).
+`AsyncSiftingClient` accepts the same configuration options and can use an `httpx.AsyncClient`.
 
-## Resources
+## API resources
 
-| Namespace | Endpoints | Highlights |
-|---|---|---|
-| `client.last` | `/v1/last/*` | `trade`, `quote`, `tvl` — live snapshots |
-| `client.stocks` | `/v1/fnd/stocks/*`, `/v1/hist/stocks/*` | `search`, `profile`, `filings`, `financials`, `ratios`, `insiders`, `events`, `screener`, `bars`, … |
-| `client.filers` | `/v1/fnd/filers/*` | `holdings` — 13F positions |
-| `client.markets` | `/v1/fnd/markets/*` | `list`, `status`, `hours`, `calendar` |
-| `client.forex` | `/v1/hist/forex/*` | `bars` |
-| `client.crypto` | `/v1/hist/crypto/*` | `bars` |
-| `client.dex` | `/v1/fnd/dex/*` | `wallet` portfolios |
-| `client.economic_calendar` | `/v1/fnd/economic-calendar` | `list` |
+| Namespace                  | Endpoints                               | Highlights                                                                                                 |
+| -------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `client.last`              | `/v1/last/*`                            | `trade`, `quote`, `tvl` live snapshots                                                                     |
+| `client.stocks`            | `/v1/fnd/stocks/*`, `/v1/hist/stocks/*` | `search`, `profile`, `filings`, `financials`, `ratios`, `insiders`, `events`, `screener`, `bars`, and more |
+| `client.filers`            | `/v1/fnd/filers/*`                      | `holdings` for 13F positions                                                                               |
+| `client.markets`           | `/v1/fnd/markets/*`                     | `list`, `status`, `hours`, `calendar`                                                                      |
+| `client.forex`             | `/v1/hist/forex/*`                      | Historical FX bars                                                                                         |
+| `client.crypto`            | `/v1/hist/crypto/*`                     | Historical crypto bars                                                                                     |
+| `client.dex`               | `/v1/fnd/dex/*`                         | Wallet and DEX-related data                                                                                |
+| `client.economic_calendar` | `/v1/fnd/economic-calendar`             | Economic calendar events                                                                                   |
 
-> Python keyword params that collide with reserved words use a trailing underscore: pass `from_=...` (sent to the API as `from`).
+Python keyword parameters that conflict with reserved words use a trailing underscore. For example, pass `from_=...` and the SDK sends it to the API as `from`.
 
 ## Pagination
 
-List endpoints return `{"data": [...], "meta": {...}}` with an opaque `meta["next_cursor"]`. Stream every page with `auto_paginate` (sync) or `aauto_paginate` (async):
+List endpoints return:
+
+```python
+{
+    "data": [...],
+    "meta": {
+        "next_cursor": "..."
+    }
+}
+```
+
+Use `auto_paginate` for sync workflows:
 
 ```python
 from siftingio import auto_paginate, collect_all
 
-for filing in auto_paginate(lambda cursor: client.stocks.filings("AAPL", cursor=cursor, form="10-K")):
+for filing in auto_paginate(
+    lambda cursor: client.stocks.filings("AAPL", cursor=cursor, form="10-K")
+):
     print(filing["accession"], filing["filed_at"])
 
-insiders = collect_all(lambda cursor: client.stocks.insiders("TSLA", cursor=cursor), max_items=100)
+insiders = collect_all(
+    lambda cursor: client.stocks.insiders("TSLA", cursor=cursor),
+    max_items=100,
+)
 ```
+
+Use `aauto_paginate` for async workflows:
 
 ```python
 from siftingio import aauto_paginate
 
-async for filing in aauto_paginate(lambda cursor: client.stocks.filings("AAPL", cursor=cursor)):
-    ...
+async for filing in aauto_paginate(
+    lambda cursor: client.stocks.filings("AAPL", cursor=cursor)
+):
+    print(filing["accession"], filing["filed_at"])
 ```
 
 ## Live WebSocket
 
-**Async:**
+### Async WebSocket
 
 ```python
-async with client.ws() as socket:   # client = AsyncSiftingClient(...)
+async with client.ws() as socket:  # client = AsyncSiftingClient(...)
     socket.on("tick", lambda t: print(t["s"], t.get("p")))
     socket.on("error", lambda e: print("server error:", e["code"], e["message"]))
-    await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])  # products: cex|dex|fx|us|tvl
-    async for frame in socket:       # or rely purely on handlers
+
+    await socket.subscribe("cex", ["BTCUSD", "ETHUSD"])  # cex, dex, fx, us, tvl
+
+    async for frame in socket:
         ...
 ```
 
-**Sync:**
+### Sync WebSocket
 
 ```python
-socket = client.ws()                 # client = SiftingClient(...)
+socket = client.ws()  # client = SiftingClient(...)
+
 socket.on("tick", lambda t: print(t["s"], t.get("p")))
 socket.connect()
 socket.subscribe("cex", ["BTCUSD"])
+
 for frame in socket.stream():
     ...
+
 socket.close()
 ```
 
-Subscriptions are tracked and **replayed automatically on reconnect**, so you subscribe once and keep receiving data across drops. In the sync client, handlers run on a background thread.
+Subscriptions are tracked and replayed automatically after reconnects.
+
+In the sync client, handlers run on a background thread. Keep handlers fast, or hand work to your own queues, channels, or worker threads.
 
 ## Error handling
 
@@ -149,16 +214,16 @@ from siftingio import SiftingAPIError, SiftingConnectionError
 try:
     client.stocks.profile("NOPE")
 except SiftingAPIError as err:
-    err.status       # 404
-    err.code         # "unknown_ticker"
-    err.retry_after  # seconds, on 429
-    err.request_id   # X-Request-Id — quote this in support tickets
-    err.body         # full parsed error body
+    err.status       # HTTP status code
+    err.code         # API error code
+    err.retry_after  # retry delay in seconds, when available
+    err.request_id   # X-Request-Id for support
+    err.body         # parsed error body
 except SiftingConnectionError as err:
-    err.timeout      # True if it was a client-side timeout
+    err.timeout      # True for client-side timeout
 ```
 
-The client automatically retries `429` and `5xx` up to `max_retries`, honoring `Retry-After`.
+The client automatically retries `429` and `5xx` responses up to `max_retries`, honoring `Retry-After` when available.
 
 ## License
 
