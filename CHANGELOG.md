@@ -3,7 +3,19 @@
 All notable changes to `siftingio` are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com); the project adheres to SemVer.
 
-## [0.1.0] — Unreleased
+## [0.1.2] — 2026-06-22
+
+### Added
+- `commodities` namespace with `bars(...)` for OHLC commodity/metal bars
+  (sync `CommoditiesResource`, async `AsyncCommoditiesResource`).
+- `order` parameter (`"asc"` / `"desc"`) on `forex.bars` and `commodities.bars`.
+
+## [0.1.1]
+
+### Changed
+- Ticker name updates.
+
+## [0.1.0]
 
 Initial release.
 
