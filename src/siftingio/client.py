@@ -13,6 +13,7 @@ from ._transport import (
     _AsyncTransport,
     _SyncTransport,
 )
+from .resources.commodities import AsyncCommoditiesResource, CommoditiesResource
 from .resources.crypto import AsyncCryptoResource, CryptoResource
 from .resources.dex import AsyncDexResource, DexResource
 from .resources.economic_calendar import (
@@ -69,6 +70,7 @@ class SiftingClient:
         self.filers = FilersResource(self._t)
         self.markets = MarketsResource(self._t)
         self.forex = ForexResource(self._t)
+        self.commodities = CommoditiesResource(self._t)
         self.crypto = CryptoResource(self._t)
         self.dex = DexResource(self._t)
         self.economic_calendar = EconomicCalendarResource(self._t)
@@ -125,6 +127,7 @@ class AsyncSiftingClient:
         self.filers = AsyncFilersResource(self._t)
         self.markets = AsyncMarketsResource(self._t)
         self.forex = AsyncForexResource(self._t)
+        self.commodities = AsyncCommoditiesResource(self._t)
         self.crypto = AsyncCryptoResource(self._t)
         self.dex = AsyncDexResource(self._t)
         self.economic_calendar = AsyncEconomicCalendarResource(self._t)
