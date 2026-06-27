@@ -2,7 +2,7 @@
 
 Official Python SDK for the [SiftingIO Market Data API](https://sifting.io).
 
-SiftingIO provides real-time and historical market data APIs for stocks, FX, crypto, commodities, DEX, and on-chain markets through REST and WebSocket.
+SiftingIO provides real-time and historical market data APIs for stocks, FX, crypto, commodities, DEX datasets, fundamentals, market news, and market hours through REST and WebSocket.
 
 This SDK is built for Python developers integrating market data into financial applications, trading tools, dashboards, research workflows, backtesting systems, data pipelines, notebooks, and enterprise data workflows.
 
@@ -19,9 +19,19 @@ This SDK is built for Python developers integrating market data into financial a
 
 * [Website](https://sifting.io)
 * [API Documentation](https://sifting.io/docs)
-* [Postman Collection](https://www.postman.com/siftingio/siftingio-market-data-api)
+* [Symbol Catalog](https://sifting.io/symbols)
+* [Market Hours](https://sifting.io/market-hours)
+* [Integrations](https://sifting.io/integrations)
+* [Postman Collection](https://www.postman.com/siftingio)
 * [Pricing](https://sifting.io/pricing)
-* [System Status](https://siftingio.instatus.com/)
+* [System Status](https://siftingio.instatus.com)
+
+## Explore coverage
+
+Before integrating, you can browse supported symbols, asset classes, and symbol-level REST/WebSocket examples in the public catalog:
+
+* [Symbol Catalog](https://sifting.io/symbols)
+* [Market Hours](https://sifting.io/market-hours)
 
 ## Install
 
