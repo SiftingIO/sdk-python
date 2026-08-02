@@ -14,7 +14,8 @@ from typing import Any, Literal, TypedDict, Union
 # server-side addition never breaks a pinned client.
 Venue = Literal["stocks", "crypto", "forex", "dex"]
 Chain = Literal["eth", "base", "arbitrum", "bsc", "polygon"]
-BarInterval = Literal["1m", "5m", "15m", "30m", "1h"]
+BarInterval = Literal["1m", "5m", "15m", "30m", "1h", "1d", "1w", "1mo"]
+PrevCloseVenue = Literal["stocks", "crypto", "forex", "commodities"]
 Impact = Literal["low", "medium", "high"]
 Region = Literal["north_america", "europe", "asia_pacific", "latam", "global"]
 Agency = Literal["BLS", "BEA", "Census", "Fed", "DOL", "EIA"]
@@ -43,6 +44,13 @@ class LastQuote(TypedDict, total=False):
     B: str
     a: str
     A: str
+    t: int
+
+
+class LastClose(TypedDict, total=False):
+    s: str
+    c: str
+    d: str
     t: int
 
 

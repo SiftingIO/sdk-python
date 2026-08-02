@@ -29,7 +29,7 @@ class CommoditiesResource(_SyncResource):
     ) -> BarsResponse:
         """OHLC bars, e.g. ``bars("XAUUSD", start="2024-01-01", interval="1d", order="desc")``.
 
-        ``start`` is required. ``interval`` may be 1m/5m/15m/30m/1h/1d.
+        ``start`` is required. ``interval`` may be 1m/5m/15m/30m/1h/1d/1w/1mo.
         ``order`` is ``"asc"`` (default, oldest first) or ``"desc"`` (newest first)."""
         return self._get(_bars(symbol, start, end, interval, cursor, limit, order))
 
